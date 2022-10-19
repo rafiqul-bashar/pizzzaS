@@ -1,12 +1,24 @@
 import { Box, Flex } from "@chakra-ui/react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import Cart from "../components/Cart";
 import Header from "../components/Header";
 
 export default function Layout({ children }) {
+  const [showCart, setShowCart] = useState(false);
+  const handleShow = () => {
+    setShowCart(!showCart);
+  };
   return (
-    <Flex flexDir="column" h="100vh" w="100vw" overflow="auto">
-      <Header />
+    <Flex
+      flexDir="column"
+      h="100vh"
+      w="100vw"
+      overflow="auto"
+      position="relative"
+    >
+      <Header handleShow={handleShow} />
+      {showCart && <Cart />}
       {children}
       <footer>
         <h1>

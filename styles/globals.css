@@ -10,21 +10,25 @@ body {
 * {
   box-sizing: border-box;
 }
-.logo svg{
+.logo svg {
   width: 25px;
   height: 25px;
   cursor: pointer;
 }
 
-#landing{
-  
-  background:linear-gradient(to bottom, rgba(0,0,0, 0.7), rgba(255,255, 255, 0.3)),url('https://img.freepik.com/free-photo/vegetables-set-left-black-slate_1220-685.jpg?w=996&t=st=1665645634~exp=1665646234~hmac=ac31c01b4cd45d6c38c1c11af1c1776f4329d95cce6a46aa239fa2b7d2e37170');
+#landing {
+  background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.7),
+      rgba(255, 255, 255, 0.3)
+    ),
+    url("https://img.freepik.com/free-photo/vegetables-set-left-black-slate_1220-685.jpg?w=996&t=st=1665645634~exp=1665646234~hmac=ac31c01b4cd45d6c38c1c11af1c1776f4329d95cce6a46aa239fa2b7d2e37170");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-nav{
+nav {
   height: 70px;
   position: sticky;
   top: 0;
@@ -34,30 +38,68 @@ nav{
   /* backdrop-filter: blur(4px); */
 }
 
-.featureCardLogo{
+.featureCardLogo {
   border: 2px solid black;
   padding: 0.8rem;
   margin: auto;
   height: 80px;
   width: 80px;
 }
-.featureCardLogo:hover{
-  
-  transition: all ;
+.featureCardLogo:hover {
+  transition: all;
   transition-timing-function: ease-out;
   transition-duration: 0.3s;
   transform: scale(1.1);
 }
-footer{
+footer {
   padding: 2rem;
   text-align: center;
   background: #000;
-  color:white;
+  color: white;
 }
-footer h1{
+footer h1 {
   font-size: larger;
 }
 footer span {
   color: rgb(233, 93, 62);
   font-weight: 700;
+}
+
+.chooseSize{
+  text-transform: capitalize;
+  padding: 0.5rem;
+  cursor: pointer;
+  border: 1.5px solid black;
+}
+.sizes {
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+}
+.size {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  cursor: pointer;
+}
+
+.size:nth-child(2) {
+  width: 40px;
+  height: 40px;
+}
+
+.size:last-child {
+  width: 50px;
+  height: 50px;
+}
+
+.number {
+  position: absolute;
+  top: -5px;
+  right: -20px;
+  background-color: teal;
+  color: white;
+  font-size: 12px;
+  padding: 0 5px;
+  border-radius: 10px;
 }

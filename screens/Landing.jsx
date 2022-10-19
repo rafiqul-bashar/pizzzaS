@@ -1,9 +1,7 @@
 import {
   Box,
   Button,
-  Center,
   Container,
-  Flex,
   Heading,
   Image,
   Select,
@@ -11,53 +9,80 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
+import PizzaCard from "../components/PizzaCard";
 
-const PizzaCard = ({ title, price, desc }) => {
-  return (
-    <Box textAlign="center" p={4} rounded="md" border="2px" color="#333">
-      <Image
-        boxSize="200px"
-        objectFit="cover"
-        src="/landingBg.svg"
-        alt="pizza"
-        mx="auto"
-      />
+const data = [
+  {
+    _id: "634bdbb8dbfede97ad3457a5",
+    name: "American Favourite Feast",
+    description:
+      "Chicken sausage, Beef pepperoni come together with seasoned mushrooms and green chilli to deliver a spicy and meaty mouthfeel.",
+    price: [19, 27, 38],
+    img: "https://images.dominos.com.bd/american_fav_feast.png",
+    sizes: ["small", "regular", "large"],
+    createdAt: "2022-10-16T10:23:52.365Z",
+    updatedAt: "2022-10-16T10:23:52.365Z",
+    __v: 0,
+  },
+  {
+    _id: "634bdec51912313013c33fbe",
+    name: "Ultimate Pepperoni",
+    description:
+      "An American cult pizza made of smoky beef pepperoni and extra mozzarella cheese",
+    price: [22, 32, 48],
+    img: "https://images.dominos.com.bd/ultimate_pepperoni.png",
+    sizes: ["regular", "large", "extra-large"],
+    createdAt: "2022-10-16T10:36:53.709Z",
+    updatedAt: "2022-10-16T10:36:53.709Z",
+    __v: 0,
+  },
+];
+// const PizzaCard = ({ title, price, desc }) => {
+//   return (
+//     <Box textAlign="center" p={4} rounded="md" border="2px" color="#333">
+//       <Image
+//         boxSize="200px"
+//         objectFit="cover"
+//         src="/landingBg.svg"
+//         alt="pizza"
+//         mx="auto"
+//       />
 
-      <Heading my={3} size="md">
-        {title}
-      </Heading>
-      <Text maxH="4" fontSize="xs" as="p" noOfLines={3}>
-        {desc}
-      </Text>
-      <Box>
-        <Heading my={3} size="lg">
-          $ {price}
-        </Heading>
-        <Select
-          placeholder="Regular"
-          rounded="full"
-          my={3}
-          border="1px"
-          _focus={{ borderColor: "black" }}
-        >
-          <option value="option2">Large</option>
-          <option value="option3">Extra Large</option>
-        </Select>
-        <Button
-          rounded="full"
-          bg="primary"
-          _hover={{ bg: "primary", opacity: 0.8 }}
-          color="white"
-          size="sm"
-          w="full"
-          autoCapitalize="uppercase"
-        >
-          Add to cart
-        </Button>
-      </Box>
-    </Box>
-  );
-};
+//       <Heading my={3} size="md">
+//         {title}
+//       </Heading>
+//       <Text maxH="4" fontSize="xs" as="p" noOfLines={3}>
+//         {desc}
+//       </Text>
+//       <Box>
+//         <Heading my={3} size="lg">
+//           $ {price}
+//         </Heading>
+//         <Select
+//           placeholder="Regular"
+//           rounded="full"
+//           my={3}
+//           border="1px"
+//           _focus={{ borderColor: "black" }}
+//         >
+//           <option value="option2">Large</option>
+//           <option value="option3">Extra Large</option>
+//         </Select>
+//         <Button
+//           rounded="full"
+//           bg="primary"
+//           _hover={{ bg: "primary", opacity: 0.8 }}
+//           color="white"
+//           size="sm"
+//           w="full"
+//           autoCapitalize="uppercase"
+//         >
+//           Add to cart
+//         </Button>
+//       </Box>
+//     </Box>
+//   );
+// };
 
 export default function Landing() {
   return (
@@ -92,25 +117,16 @@ export default function Landing() {
             Trending Recipe
           </Heading>
           <SimpleGrid columns={[1, 3]} spacing={10} px={[0, 12]}>
-            <PizzaCard
-              price={20}
-              title={"Cheese Loveer"}
-              desc={
-                "Combination of Alfredo sauce and two cheeses – Romano, and Parmesan."
-              }
-            />
-            <PizzaCard
-              price={25}
-              title={"Pepperoni Pizza"}
-              desc={"Pizza with homemade spicy beef sausage"}
-            />
-            <PizzaCard
-              price={30}
-              title={"Magherita Pizza"}
-              desc={
-                "Made with San Marzano tomatoes, mozzarella cheese, and fresh basil."
-              }
-            />
+            {data.map((product, index) => (
+              <PizzaCard
+                key={index}
+                title={product?.name}
+                desc={product?.description}
+                imgSrc={product?.img}
+                prices={product?.price}
+                sizes={product?.sizes}
+              />
+            ))}
           </SimpleGrid>
         </Box>
       </Container>

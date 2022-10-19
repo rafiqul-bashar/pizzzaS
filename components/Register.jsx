@@ -32,22 +32,31 @@ export default function Register() {
   const router = useRouter();
   const dispatch = useDispatch();
   const handleClick = () => setShow(!show);
-
+  const registerUrl = "http://localhost:5000/api/v1/user/login";
   const register = async () => {
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        dispatch(loginUser(user));
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorMessage);
-      })
-      .then(() => {
-        router.push("/");
-      });
+    const { data } = await axios.post(registerUrl, {
+      name,
+      email,
+      password,
+      phone,
+      address,
+    });
+    dispatch(loginUser(data));
+
+    // await createUserWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     // Signed in
+    //     const user = userCredential.user;
+    //     dispatch(loginUser(user));
+    //   })
+    //   .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     alert(errorMessage);
+    //   })
+    //   .then(() => {
+    //   });
+    router.push("/");
   };
 
   const handleSubmit = (e) => {

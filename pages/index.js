@@ -1,27 +1,17 @@
-import { Heading } from "@chakra-ui/react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Head from "next/head";
-import { useEffect } from "react";
+
 import { Contact, Landing, Services } from "../screens";
 import Layout from "../screens/Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { loginUser, logOutUser, selectUser } from "../app/slices/userSlice";
+
 export default function Home() {
   const navigate = useRouter();
   const auth = getAuth();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  console.log(user);
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        dispatch(loginUser(user));
-      } else {
-        dispatch(logOutUser());
-      }
-    });
-  }, [dispatch]);
 
   return (
     <div>
