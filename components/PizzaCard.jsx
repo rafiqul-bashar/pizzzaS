@@ -7,15 +7,42 @@ import {
   Input,
   Select,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { addToCart } from "../app/slices/cartSlice";
 
-export default function PizzaCard({ title, prices, desc, imgSrc, sizes }) {
+export default function PizzaCard({ title, prices, desc, imgSrc, sizes, _id }) {
   const [size, setSize] = useState(sizes[0]);
   const [quantity, setQuantity] = useState(1);
-
   const priceIndex = sizes.indexOf(size);
   const price = prices[priceIndex];
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+  const decreaseQuantity = () => {
+    if (quantity === 1) {
+      return;
+    } else {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const product = { title, price, imgSrc, size, _id };
+  const handleAddtoCart = () => {
+    dispatch(addToCart({ ...product, cartQuantity: quantity }));
+    toast({
+      title: "Added to cart",
+      status: "success",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Box
       maxW="400px"
@@ -44,13 +71,7 @@ export default function PizzaCard({ title, prices, desc, imgSrc, sizes }) {
           {title}
         </Text>
 
-        <Text
-          istruncated
-          fontWeight="light"
-          fontSize="md"
-          h="50px"
-          overflow="hidden"
-        >
+        <Text fontWeight="light" fontSize="md" h="50px" overflow="hidden">
           {desc}
         </Text>
         <Text fontSize="sm" mt="3" fontWeight="light" textColor="gray.600">
@@ -74,15 +95,12 @@ export default function PizzaCard({ title, prices, desc, imgSrc, sizes }) {
               ))}
             </Select>
           </Box>
-          <Box maxW="6">
-            <Input
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              mx="auto"
-              size="xs"
-            />
-          </Box>
-          <Text istruncated fontWeight="bold" fontSize="lg">
+          <Flex gap="2">
+            <AiOutlineMinus onClick={decreaseQuantity} />
+            <span>{quantity}</span>
+            <AiOutlinePlus onClick={increaseQuantity} />
+          </Flex>
+          <Text fontWeight="bold" fontSize="lg">
             ${price}
           </Text>
         </Flex>
@@ -94,6 +112,7 @@ export default function PizzaCard({ title, prices, desc, imgSrc, sizes }) {
           size="sm"
           w="full"
           autoCapitalize="uppercase"
+          onClick={handleAddtoCart}
         >
           Add to cart
         </Button>

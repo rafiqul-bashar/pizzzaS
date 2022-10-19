@@ -114,6 +114,7 @@ export default function Menu() {
                   imgSrc={product?.img}
                   prices={product?.price}
                   sizes={product?.sizes}
+                  _id={product?._id}
                 />
               ))}
             </SimpleGrid>

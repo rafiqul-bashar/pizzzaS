@@ -1,12 +1,11 @@
 import {
   Box,
   Button,
+  Center,
   Flex,
   Grid,
   Image,
-  SimpleGrid,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -15,63 +14,91 @@ import {
   Th,
   Thead,
   Tr,
+  useToast,
 } from "@chakra-ui/react";
-import React from "react";
-
-const data = [
-  {
-    _id: "634bdbb8dbfede97ad3457a5",
-    name: "American Favourite Feast",
-    description:
-      "Chicken sausage, Beef pepperoni come together with seasoned mushrooms and green chilli to deliver a spicy and meaty mouthfeel.",
-    price: [19, 27, 38],
-    img: "https://images.dominos.com.bd/american_fav_feast.png",
-    sizes: ["small", "regular", "large"],
-    createdAt: "2022-10-16T10:23:52.365Z",
-    updatedAt: "2022-10-16T10:23:52.365Z",
-    __v: 0,
-  },
-  {
-    _id: "634bdec51912313013c33fbe",
-    name: "Ultimate Pepperoni",
-    description:
-      "An American cult pizza made of smoky beef pepperoni and extra mozzarella cheese",
-    price: [22, 32, 48],
-    img: "https://images.dominos.com.bd/ultimate_pepperoni.png",
-    sizes: ["regular", "large", "extra-large"],
-    createdAt: "2022-10-16T10:36:53.709Z",
-    updatedAt: "2022-10-16T10:36:53.709Z",
-    __v: 0,
-  },
-];
-const CartItem = ({ imgSrc, title, quan, price }) => {
-  return (
-    <>
-      <Grid templateColumns="repeat(4, 1fr)" gap={4}>
-        <Image colSpan={1} boxSize="50px" src={imgSrc} alt="name" />
-        <Text colSpan={1}>{title}</Text>
-        <Text>{quan}</Text>
-        <Text>{price}</Text>
-      </Grid>
-      <hr />
-    </>
-  );
-};
+import React, { useEffect, useState } from "react";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  clearCart,
+  decreaseCart,
+  getTotals,
+  removeFromCart,
+  selectCart,
+} from "../app/slices/cartSlice";
+import { MdDeleteForever } from "react-icons/md";
 
 export default function Cart() {
-  let quan = 1;
-  if (quan === 0) {
+  const { cartItems, cartTotalQuantity, cartTotalAmount } =
+    useSelector(selectCart);
+  const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
+  const toast = useToast();
+
+  useEffect(() => {
+    dispatch(getTotals());
+  }, [cartItems, dispatch]);
+
+  const increaseQuantity = (product) => {
+    dispatch(addToCart(product));
+    setQuantity(quantity + 1);
+    toast({
+      title: "Product quantity increased",
+      status: "info",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+  const emptyCart = () => {
+    dispatch(clearCart());
+    toast({
+      title: "Cleared cart",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+  const removeProduct = (product) => {
+    dispatch(removeFromCart(product));
+    toast({
+      title: "Removed Item from Cart",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+  const decreaseQuantity = (product) => {
+    dispatch(decreaseCart(product));
+    if (quantity === 1) {
+      return;
+    } else {
+      setQuantity(quantity - 1);
+    }
+    toast({
+      title: "Product quantity decreased",
+      status: "warning",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+  if (cartTotalQuantity === 0) {
     return (
       <Box
         position="absolute"
         top={16}
         right="0"
         zIndex={3}
-        w="280px"
+        w={["280px", "lg"]}
         bg="white"
         shadow="sm"
+        p={3}
       >
-        <Text mx="auto">You have No Items in the cart</Text>
+        <Center h="full" w="full">
+          <Text mx="auto" letterSpacing="widest">
+            Your Cart is empty.
+          </Text>
+        </Center>
       </Box>
     );
   }
@@ -93,7 +120,7 @@ export default function Cart() {
         fontWeight="semibold"
         textColor="gray.700"
       >
-        You have {quan} items
+        You have {cartTotalQuantity} items
       </Text>
       <hr />
       {/*       
@@ -148,30 +175,37 @@ export default function Cart() {
               <Td>metres (m)</Td>
               <Td isNumeric>0.91444</Td>
             </Tr> */}
-            {data.map((product, index) => (
-              <Tr key="index">
+            {cartItems?.map((product, index) => (
+              <Tr key={index}>
                 <Td>
                   <Flex gap="3">
                     <Image
                       colSpan={1}
                       boxSize="50px"
-                      src={product?.img}
-                      alt={product?.name}
+                      src={product?.imgSrc}
+                      alt={product?.title}
                     />
                     <Text colSpan={1}>{product?.name}</Text>
                   </Flex>
                 </Td>
-                <Td textAlign="center">{quan}</Td>
-                <Td isNumeric>$ 30.48</Td>
+                <Td textAlign="end">
+                  <Flex gap="2">
+                    <AiOutlineMinus onClick={() => decreaseQuantity(product)} />
+                    <span>{quantity}</span>
+                    <AiOutlinePlus onClick={() => increaseQuantity(product)} />
+                    <MdDeleteForever onClick={() => removeProduct(product)} />
+                  </Flex>
+                </Td>
+                <Td isNumeric>$ {product?.price}</Td>
               </Tr>
             ))}
           </Tbody>
           <Tfoot>
             <Tr>
               <Th>Total</Th>
-              <Th>=</Th>
+              <Th textAlign="end">=</Th>
               <Td isNumeric textAlign="end">
-                $ 100
+                $ {cartTotalAmount}
               </Td>
             </Tr>
           </Tfoot>
@@ -179,6 +213,15 @@ export default function Cart() {
       </TableContainer>
       <Button w="full" colorScheme="teal">
         CheckOut
+      </Button>
+      <Button
+        onClick={emptyCart}
+        mt="2"
+        w="full"
+        colorScheme="red"
+        variant="outline"
+      >
+        Clear Cart
       </Button>
     </Box>
   );
