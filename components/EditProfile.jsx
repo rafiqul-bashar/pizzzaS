@@ -1,75 +1,44 @@
-import React from "react";
 import {
   Button,
+  Container,
   Flex,
   Heading,
+  Icon,
   Input,
   InputGroup,
   InputLeftAddon,
   InputLeftElement,
   InputRightElement,
 } from "@chakra-ui/react";
-import { useDispatch } from "react-redux";
-import { auth } from "../firebase";
+import React from "react";
+import { AiOutlineMail } from "react-icons/ai";
 import { BsCardText } from "react-icons/bs";
-import {
-  AiOutlineEye,
-  AiOutlineMail,
-  AiOutlineEyeInvisible,
-} from "react-icons/ai";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from "next/router";
-import { loginUser } from "../app/slices/userSlice";
 
-export default function Register() {
-  const [show, setShow] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [address, setAddress] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const handleClick = () => setShow(!show);
-  const registerUrl = "http://localhost:5000/api/v1/user/register";
-  const register = async () => {
-    const { data } = await axios.post(registerUrl, {
-      name,
-      email,
-      password,
-      phone,
-      address,
-    });
-    dispatch(loginUser(data));
-
-    router.push("/");
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    register();
-  };
-
+export default function EditProfile({ user }) {
+  const { name, email, img, address, phone } = user;
   return (
-    <form onSubmit={handleSubmit}>
-      <Flex flexDir="column" gap={4} px="4" mx="auto" maxW="lg" py="16">
+    <Container>
+      <Flex flexDir="column" gap={4} px="4" mx="auto" maxW="lg" py="8">
         <Heading color="gray.700" size="lg">
-          Fill All Information to Register
+          Edit Profile
         </Heading>
-
+        <label htmlFor="">Name</label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
           type="text"
-          placeholder="Your Name"
+          // placeholder="Your Name"
           isRequired
         />
+        <label htmlFor="">Email</label>
         <InputGroup>
           <InputLeftElement
             pointerEvents="none"
-            children={<AiOutlineMail color="gray.300" />}
+            children={
+              <Icon as={AiOutlineMail} w={8} h={8} color="yellow.500" />
+            }
           />
+
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -78,10 +47,12 @@ export default function Register() {
             isRequired
           />
         </InputGroup>
+        <label htmlFor="">Address</label>
+
         <InputGroup>
           <InputLeftElement
             pointerEvents="none"
-            children={<BsCardText color="gray.300" />}
+            children={<Icon as={BsCardText} w={8} h={8} color="yellow.500" />}
           />
           <Input
             value={address}
@@ -90,6 +61,8 @@ export default function Register() {
             placeholder="Your Address"
           />
         </InputGroup>
+        <label htmlFor="">Phone</label>
+
         <InputGroup>
           <InputLeftAddon children="+880" />
           <Input
@@ -100,7 +73,7 @@ export default function Register() {
           />
         </InputGroup>
 
-        <InputGroup size="md">
+        {/* <InputGroup size="md">
           <Input
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -114,11 +87,11 @@ export default function Register() {
               {!show ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </Button>
           </InputRightElement>
-        </InputGroup>
+        </InputGroup> */}
         <Button type="submit" colorScheme="yellow" border="none" rounded="none">
-          Register
+          Update Profile
         </Button>
       </Flex>
-    </form>
+    </Container>
   );
 }

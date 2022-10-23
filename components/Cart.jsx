@@ -3,8 +3,16 @@ import {
   Button,
   Center,
   Flex,
-  Grid,
+  Icon,
+  IconButton,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Table,
   TableContainer,
   Tbody,
@@ -14,6 +22,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -28,17 +37,35 @@ import {
   selectCart,
 } from "../app/slices/cartSlice";
 import { MdDeleteForever } from "react-icons/md";
+import Router from "next/router";
+import PlaceOrder from "./PlaceOrder";
 
-export default function Cart() {
+export default function Cart({ handleShow }) {
   const { cartItems, cartTotalQuantity, cartTotalAmount } =
     useSelector(selectCart);
   const [quantity, setQuantity] = useState(1);
+  const [payment, setPayment] = useState(false);
+  const [isCOD, setIsCOD] = useState(false);
+  const user = true;
   const dispatch = useDispatch();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     dispatch(getTotals());
   }, [cartItems, dispatch]);
+
+  const handleCOD = () => {
+    setIsCOD(!isCOD);
+  };
+
+  const handleCheckOut = () => {
+    if (!user) {
+      Router.push("/auth");
+    } else {
+      setPayment(true);
+    }
+  };
 
   const increaseQuantity = (product) => {
     dispatch(addToCart(product));
@@ -52,12 +79,14 @@ export default function Cart() {
   };
   const emptyCart = () => {
     dispatch(clearCart());
+    onClose();
     toast({
       title: "Cleared cart",
       status: "error",
       duration: 4000,
       isClosable: true,
     });
+    handleShow(false);
   };
   const removeProduct = (product) => {
     dispatch(removeFromCart(product));
@@ -104,11 +133,11 @@ export default function Cart() {
   }
   return (
     <Box
-      position="absolute"
+      position="fixed"
       top={16}
       right="0"
       zIndex={3}
-      w={["280px", "lg"]}
+      w={["full", "lg"]}
       bg="white"
       shadow="sm"
       p={3}
@@ -123,38 +152,7 @@ export default function Cart() {
         You have {cartTotalQuantity} items
       </Text>
       <hr />
-      {/*       
-      <Flex flexDir="column">
-        {data.map((product, index) => (
-          <CartItem
-            key={index}
-            title={product?.name}
-            imgSrc={product?.img}
-            price="30"
-            quan="2"
-          />
-        ))}
-      </Flex>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Text
-          my={2}
-          fontSize="sm"
-          mt="3"
-          fontWeight="semibold"
-          textColor="gray.700"
-        >
-          Total
-        </Text>
-        <Text
-          my={2}
-          fontSize="sm"
-          mt="3"
-          fontWeight="semibold"
-          textColor="gray.700"
-        >
-          $ 220
-        </Text>
-      </Flex> */}
+
       <TableContainer>
         <Table variant="simple">
           <Thead>
@@ -165,16 +163,6 @@ export default function Cart() {
             </Tr>
           </Thead>
           <Tbody>
-            {/* <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
-            </Tr> */}
             {cartItems?.map((product, index) => (
               <Tr key={index}>
                 <Td>
@@ -189,11 +177,30 @@ export default function Cart() {
                   </Flex>
                 </Td>
                 <Td textAlign="end">
-                  <Flex gap="2">
-                    <AiOutlineMinus onClick={() => decreaseQuantity(product)} />
-                    <span>{quantity}</span>
-                    <AiOutlinePlus onClick={() => increaseQuantity(product)} />
-                    <MdDeleteForever onClick={() => removeProduct(product)} />
+                  <Flex gap="2" alignItems="center">
+                    <IconButton
+                      onClick={() => decreaseQuantity(product)}
+                      variant={"ghost"}
+                      icon={<AiOutlineMinus />}
+                    />
+                    <p style={{ textAlign: "center" }}>{quantity}</p>
+
+                    <Icon
+                      onClick={() => increaseQuantity(product)}
+                      as={AiOutlinePlus}
+                      w={6}
+                      h={6}
+                      color="blue.400"
+                      cursor="pointer"
+                    />
+                    <Icon
+                      onClick={() => removeProduct(product)}
+                      as={MdDeleteForever}
+                      w={6}
+                      h={6}
+                      color="red.500"
+                      cursor="pointer"
+                    />
                   </Flex>
                 </Td>
                 <Td isNumeric>$ {product?.price}</Td>
@@ -211,18 +218,75 @@ export default function Cart() {
           </Tfoot>
         </Table>
       </TableContainer>
-      <Button w="full" colorScheme="teal">
-        CheckOut
-      </Button>
-      <Button
-        onClick={emptyCart}
-        mt="2"
-        w="full"
-        colorScheme="red"
-        variant="outline"
-      >
-        Clear Cart
-      </Button>
+      {!payment ? (
+        <Box>
+          <Button onClick={handleCheckOut} w="full" colorScheme="teal">
+            CheckOut
+          </Button>
+          <Button
+            onClick={onOpen}
+            mt="2"
+            w="full"
+            colorScheme="red"
+            variant="outline"
+          >
+            Clear Cart
+          </Button>
+        </Box>
+      ) : (
+        <Box>
+          <Button onClick={handleCOD} w="full" colorScheme="telegram">
+            Cash On Delivery
+          </Button>
+          <Button
+            onClick={onOpen}
+            mt="2"
+            w="full"
+            colorScheme="red"
+            variant="outline"
+          >
+            Cancel
+          </Button>
+        </Box>
+      )}
+
+      <Modal isOpen={isCOD} onClose={() => setIsCOD(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Fill all informations *</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <PlaceOrder setIsCOD={setIsCOD} />
+          </ModalBody>
+          <ModalFooter bg="white">
+            <Button
+              onClick={() => setIsCOD(false)}
+              variant="outline"
+              colorScheme="red"
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Clear Cart Modal*/}
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Are you sure?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>Clear Cart?</ModalBody>
+          <ModalFooter bg="white">
+            <Button colorScheme="red" mr={3} onClick={emptyCart}>
+              Yes
+            </Button>
+            <Button onClick={onClose} variant="outline" colorScheme="linkedin">
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

@@ -8,6 +8,7 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import React from "react";
 import PizzaCard from "../components/PizzaCard";
 
@@ -37,52 +38,6 @@ const data = [
     __v: 0,
   },
 ];
-// const PizzaCard = ({ title, price, desc }) => {
-//   return (
-//     <Box textAlign="center" p={4} rounded="md" border="2px" color="#333">
-//       <Image
-//         boxSize="200px"
-//         objectFit="cover"
-//         src="/landingBg.svg"
-//         alt="pizza"
-//         mx="auto"
-//       />
-
-//       <Heading my={3} size="md">
-//         {title}
-//       </Heading>
-//       <Text maxH="4" fontSize="xs" as="p" noOfLines={3}>
-//         {desc}
-//       </Text>
-//       <Box>
-//         <Heading my={3} size="lg">
-//           $ {price}
-//         </Heading>
-//         <Select
-//           placeholder="Regular"
-//           rounded="full"
-//           my={3}
-//           border="1px"
-//           _focus={{ borderColor: "black" }}
-//         >
-//           <option value="option2">Large</option>
-//           <option value="option3">Extra Large</option>
-//         </Select>
-//         <Button
-//           rounded="full"
-//           bg="primary"
-//           _hover={{ bg: "primary", opacity: 0.8 }}
-//           color="white"
-//           size="sm"
-//           w="full"
-//           autoCapitalize="uppercase"
-//         >
-//           Add to cart
-//         </Button>
-//       </Box>
-//     </Box>
-//   );
-// };
 
 export default function Landing() {
   return (
@@ -105,7 +60,7 @@ export default function Landing() {
                 color="white"
                 size={["sm", "md"]}
               >
-                Order Online
+                <Link href="/menu">Order Online</Link>
               </Button>
             </Box>
           </Box>

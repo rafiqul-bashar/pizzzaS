@@ -1,17 +1,21 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Head from "next/head";
 
 import { Contact, Landing, Services } from "../screens";
 import Layout from "../screens/Layout";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { loginUser, logOutUser, selectUser } from "../app/slices/userSlice";
+
+import { useEffect, useState } from "react";
+import { Loading } from "../components";
 
 export default function Home() {
-  const navigate = useRouter();
-  const auth = getAuth();
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div>

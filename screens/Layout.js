@@ -1,10 +1,42 @@
 import { Box, Flex } from "@chakra-ui/react";
+import axios from "axios";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../app/slices/userSlice";
 import Cart from "../components/Cart";
 import Header from "../components/Header";
+import { baseUrl } from "../utils/http";
 
 export default function Layout({ children }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const existToken = localStorage.getItem("userToken");
+
+    const id = localStorage.getItem("uid");
+
+    if (!id) {
+      return;
+    }
+
+    const fetchUser = async () => {
+      const userAxios = axios.create({
+        baseURL: `${baseUrl}/user`,
+        timeout: 1000,
+        headers: { Authorization: `Bearer ${existToken}` },
+      });
+      try {
+        const { data } = await userAxios.post("/me", {
+          id,
+        });
+        dispatch(loginUser(data));
+      } catch (error) {}
+    };
+
+    fetchUser();
+  }, [dispatch]);
+
   const [showCart, setShowCart] = useState(false);
   const handleShow = () => {
     setShowCart(!showCart);
@@ -18,7 +50,7 @@ export default function Layout({ children }) {
       position="relative"
     >
       <Header handleShow={handleShow} />
-      {showCart && <Cart />}
+      {showCart && <Cart handleShow={handleShow} />}
       {children}
       <footer>
         <h1>

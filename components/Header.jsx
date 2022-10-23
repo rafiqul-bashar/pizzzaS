@@ -1,7 +1,17 @@
-import { Box, Button, Flex, Heading, Show, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Icon,
+  IconButton,
+  Show,
+  Text,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useState } from "react";
-import { HiMenu } from "react-icons/hi";
+import { HiMenu, HiShoppingCart } from "react-icons/hi";
 import { GrClose } from "react-icons/gr";
 import { IoExitOutline } from "react-icons/io5";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,6 +19,7 @@ import { logOutUser, selectUser } from "../app/slices/userSlice";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { selectCart } from "../app/slices/cartSlice";
+import { BsCartFill } from "react-icons/bs";
 
 export default function Header({ handleShow }) {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -17,6 +28,7 @@ export default function Header({ handleShow }) {
   const { cartTotalQuantity } = useSelector(selectCart);
 
   const handleLogout = () => {
+    localStorage.clear();
     signOut(auth);
     dispatch(logOutUser());
   };
@@ -51,10 +63,10 @@ export default function Header({ handleShow }) {
               Home
             </Link>
             <Link href="/menu">Menu</Link>
-            {user?.uid && <Link href="#delivery">Delivery</Link>}
-
             <Link href="/#service">About</Link>
             <Link href="/#contact">Contact</Link>
+            {user?.email && <Link href="#delivery">Delivery</Link>}
+            {user?.email && <Link href="/profile">My Profile</Link>}
           </Flex>
         </Show>
         <Show breakpoint="(max-width: 480px)">
@@ -107,11 +119,7 @@ export default function Header({ handleShow }) {
             >
               {cartTotalQuantity}
             </Text>
-            <h1 className="logo cart" onClick={handleShow}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                <path d="M24 0C10.7 0 0 10.7 0 24S10.7 48 24 48H76.1l60.3 316.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H179.9l-9.1-48h317c14.3 0 26.9-9.5 30.8-23.3l54-192C578.3 52.3 563 32 541.8 32H122l-2.4-12.5C117.4 8.2 107.5 0 96 0H24zM176 512c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm336-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48z" />
-              </svg>
-            </h1>
+            <Icon onClick={handleShow} as={HiShoppingCart} w={6} h={6} />
           </Box>
 
           {!user?.email ? (
@@ -125,9 +133,14 @@ export default function Header({ handleShow }) {
               <Link href="/auth">SIGN IN</Link>
             </Button>
           ) : (
-            <Flex onClick={handleLogout} gap={2} textAlign="center">
-              <h2>{user?.name || "Rafiqul"}</h2>
-              <IoExitOutline cursor="pointer" size="1.5rem" color="#F44A25" />
+            <Flex gap={2} textAlign="center">
+              <Avatar size="sm" name={user?.name} src={user?.img} />
+              <IconButton
+                variant={"ghost"}
+                onClick={handleLogout}c
+                aria-label="Search database"
+                icon={<IoExitOutline cursor="pointer" size="1.5rem" />}
+              />
             </Flex>
           )}
         </Flex>
@@ -154,31 +167,52 @@ export default function Header({ handleShow }) {
             <button onClick={() => setMobileMenu(!mobileMenu)}>Home</button>
           </Link>
 
-          <Link pb={4} href="#">
+          <Link pb={4} href="/menu">
             <button onClick={() => setMobileMenu(!mobileMenu)}>Menu</button>
           </Link>
           <Link
             onClick={() => setMobileMenu(!mobileMenu)}
-            borderBottom={"2px"}
             pb={4}
-            href="#"
-          >
-            <button onClick={() => setMobileMenu(!mobileMenu)}>Delivery</button>
-          </Link>
-          <Link
-            onClick={() => setMobileMenu(!mobileMenu)}
-            pb={4}
-            href="#service"
+            href="/#service"
           >
             <button onClick={() => setMobileMenu(!mobileMenu)}>About</button>
           </Link>
           <Link
             onClick={() => setMobileMenu(!mobileMenu)}
             pb={4}
-            href="#contact"
+            href="/#contact"
           >
             <button onClick={() => setMobileMenu(!mobileMenu)}>Contact</button>
           </Link>
+          {user?.email && (
+            <Link
+              onClick={() => setMobileMenu(!mobileMenu)}
+              borderBottom={"2px"}
+              pb={4}
+              href="/#delivery"
+            >
+              <button onClick={() => setMobileMenu(!mobileMenu)}>Orders</button>
+            </Link>
+          )}
+          {user?.email && (
+            <Link
+              onClick={() => setMobileMenu(!mobileMenu)}
+              pb={4}
+              href="/profile"
+            >
+              <button onClick={() => setMobileMenu(!mobileMenu)}>
+                My Profile
+              </button>
+            </Link>
+          )}
+          {user?.email && (
+            <IconButton
+              variant={"ghost"}
+              onClick={handleLogout}
+              aria-label="Search database"
+              icon={<IoExitOutline cursor="pointer" size="1.5rem" />}
+            />
+          )}
         </Flex>
       ) : null}
     </nav>

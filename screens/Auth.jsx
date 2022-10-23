@@ -10,11 +10,13 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { Login, Register } from "../components";
-import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Auth() {
+  const router = useRouter();
+
   return (
     <SimpleGrid h={["90vh", "80vh"]} columns={[1, 2]}>
       <Show breakpoint="(min-width: 480px)">
